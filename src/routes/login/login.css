@@ -1,0 +1,23 @@
+/* .background {
+    background: url('../../layouts/LoginLayout/assests/brand-shape-bg.png') blueviolet;
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+} */
+
+/* .login-form {
+  position:absolute;
+  max-width: 300px;
+  top: 30%;
+  left: 30%;
+  border-style: solid;
+} */
+.login {
+  margin-top: 100px;
+}
+.login-button {
+  width: 30%;
+}
+

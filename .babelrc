@@ -1,0 +1,9 @@
+{
+  "presets": ["react", "babel-preset-env"],
+  "env": {
+    "development": {
+      "presets": ["react-hmre"]
+    }
+  },
+  "plugins": ["transform-class-properties", "transform-object-rest-spread"]
+}

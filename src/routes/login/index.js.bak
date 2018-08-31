@@ -1,0 +1,101 @@
+import React, { Component } from 'react';
+import gql from "graphql-tag";
+import { Mutation } from "react-apollo";
+import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { saveAccessToken } from '../../utils/localStorage';
+
+const USER_LOGIN = gql`
+  mutation login($logonId: String, $password: String, $cent: Boolean) {
+    login(logonId: $logonId, password: $password, cent: $cent) {
+      userId
+      sessionId
+      logonId
+    }
+  }
+`;
+
+class LoginContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.validateForm = this.validateForm.bind(this);
+    this.state = {
+      logonId: "",
+      password: "",
+      cent: true
+    };
+  }
+
+  validateForm() {
+    return this.state.logonId.length > 0 && this.state.password.length > 0;
+  }
+
+  handleChange(event) {
+    event.preventDefault();
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+  }
+
+  handleSubmit = async(event) => {
+    event.preventDefault();
+    console.log('clicked handleSubmit() method');
+  }
+
+  render() {
+    return (
+      <Mutation mutation={USER_LOGIN}
+                onCompleted={result => {
+                  saveAccessToken(result.login.sessionId);
+                  console.log('result', result);
+                }}
+                onError={({ graphQLErrors, networkError }) => {
+                  console.log('graphQLErrors', graphQLErrors[0].message);
+                }}>
+        {(login, { data, loading, error }) => (
+            <div className="login">
+              <form onSubmit={async e => {
+                      e.preventDefault();
+                      const { logonId, password, cent } = this.state;
+                      await login({
+                        variables: { logonId, password, cent },
+                      });
+                     //  this.props.history.replace('/');
+                    }}>
+                <FormGroup controlId="logonId" bsSize="large">
+                    <ControlLabel>Email</ControlLabel>
+                    <FormControl
+                    autoFocus
+                    type="email"
+                    defaultValue={this.state.logonId}
+                    onChange={this.handleChange}
+                    />
+                </FormGroup>
+                <FormGroup controlId="password" bsSize="large">
+                    <ControlLabel>Password</ControlLabel>
+                    <FormControl
+                    defaultValue={this.state.password}
+                    onChange={this.handleChange}
+                    type="password"
+                    />
+                </FormGroup>
+                {/* <Button bsStyle="primary">Primary</Button> */}
+                <div className="text-center"> 
+                    <Button
+                        bsSize="large"
+                        bsStyle="primary"
+                        disabled={!this.validateForm()}
+                        type="submit">
+                        Login
+                    </Button>
+                </div>
+              </form>
+            </div>
+          )}
+      </Mutation>
+    );
+  }
+}
+
+export default LoginContainer;
